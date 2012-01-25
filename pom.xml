@@ -9,8 +9,8 @@
     <groupId>eu.vitaliy</groupId>
     <artifactId>vitaliy-parent-java-se</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.2-SNAPSHOT</version>
-    <name>vitaliy-parrent-java-se</name>
+    <version>1.0.1-SNAPSHOT</version>
+    <name>vitaliy-parent-java-se</name>
     <url>https://github.com/VitaliyOliynyk/vitaliy-parent-java-se</url>
 
     <description>Parent pom for Java SE projects</description>
