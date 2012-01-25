@@ -9,7 +9,7 @@
     <groupId>eu.vitaliy</groupId>
     <artifactId>vitaliy-parent-java-se</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>vitaliy-parrent-java-se</name>
     <url>https://github.com/VitaliyOliynyk/vitaliy-parent-java-se</url>
 
