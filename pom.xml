@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.vitaliy</groupId>
         <artifactId>vitaliy-parent</artifactId>
-         <version>1.0.4</version>
+        <version>1.0.5-SNAPSHOT</version>
     </parent>
 
     <groupId>eu.vitaliy</groupId>
@@ -21,12 +22,51 @@
         <developerConnection>scm:git:git@github.com:VitaliyOliynyk/vitaliy-parent-java-se.git</developerConnection>
     </scm>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+
+                <configuration>
+                    <mainClass>${mvn.main.class}</mainClass>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>${mvn.main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
     <profiles>
         <profile>
             <id>dist</id>
             <build>
                 <plugins>
-                    <!-- kopiowanie bibliotek -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
@@ -38,11 +78,52 @@
                                     <goal>copy-dependencies</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>target/lib</outputDirectory>
-                                    <excludeArtifactIds>junit,spring-test</excludeArtifactIds>
+                                    <outputDirectory>target/dist/lib</outputDirectory>
+                                    <includeScope>runtime</includeScope>
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <configuration>
+
+                                    <target>
+                                        <echo message="Start ant task copy ${project.build.directory}${file.separator}${project.build.finalName}.jar" />
+
+                                        <copy todir="${project.build.directory}${file.separator}/dist">
+                                            <fileset dir="${project.build.directory}">
+                                                <include name="${project.build.finalName}.jar" />
+                                            </fileset>
+                                        </copy>
+                                    </target>
+
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <classpathPrefix>lib/</classpathPrefix>
+                                    <addClasspath>true</addClasspath>
+                                    <mainClass>${mvn.main.class}</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -56,7 +137,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <version>1.2.1</version>
+                        <version>1.7</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -65,7 +146,8 @@
                                 </goals>
                                 <configuration>
                                     <transformers>
-                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                                        <transformer
+                                                implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
                                     </transformers>
                                 </configuration>
                             </execution>
@@ -75,4 +157,8 @@
             </build>
         </profile>
     </profiles>
+
+    <properties>
+        <mvn.main.class></mvn.main.class>
+    </properties>
 </project>
